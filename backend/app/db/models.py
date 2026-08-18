@@ -25,6 +25,15 @@ class DocumentStatus(str, enum.Enum):
     failed = "failed"
 
 
+class Team(Base):
+    __tablename__ = "teams"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+
+    members: Mapped[list["User"]] = relationship(back_populates="team")
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -35,7 +44,9 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.user)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    owner_team_id: Mapped[int] = mapped_column(Integer, ForeignKey("teams.id"), nullable=True)
 
+    team: Mapped["Team"] = relationship(back_populates="members")
     conversations: Mapped[list["Conversation"]] = relationship(back_populates="user")
     documents: Mapped[list["Document"]] = relationship(back_populates="uploaded_by_user")
 
