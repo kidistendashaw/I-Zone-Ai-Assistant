@@ -1,0 +1,44 @@
+services:
+
+  # ---- PostgreSQL Database ----
+  # This is the database that stores all data:
+  # users, conversations, messages, documents
+  postgres:
+    image: postgres:16-alpine
+    container_name: izone-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5433:5432"   # your machine port 5433 → container port 5432
+    volumes:
+      - izone_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- FastAPI Backend ----
+  # This is the Python API that the frontend talks to
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: izone-backend
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"   # your machine port 8000 → container port 8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# ---- Persistent storage for postgres data ----
+# Even if the container stops, data is not lost
+volumes:
+  izone_postgres_data:
