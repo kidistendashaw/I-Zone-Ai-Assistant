@@ -1,0 +1,28 @@
+# Web framework
+fastapi==0.115.0
+uvicorn==0.30.6
+
+# Database
+sqlalchemy==2.0.35
+alembic==1.13.3
+psycopg2-binary==2.9.9
+
+# Settings & environment
+python-dotenv==1.0.1
+pydantic-settings==2.5.2
+pydantic[email]==2.9.2
+email-validator==2.2.0
+
+# Authentication
+bcrypt==4.0.1
+python-jose[cryptography]==3.3.0
+
+# File uploads
+python-multipart==0.0.12
+
+# PDF processing (for AI pipeline - Step 4)
+pypdf2==3.0.1
+
+# AI / RAG 
+chromadb==0.5.0
+ollama==0.3.3
