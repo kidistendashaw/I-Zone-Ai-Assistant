@@ -10,6 +10,9 @@ backend/.venv/
 backend/__pycache__/
 backend/**/*.pyc
 
+# Uploaded files — never commit user uploads
+uploads/
+
 # Python
 *.pyc
 
