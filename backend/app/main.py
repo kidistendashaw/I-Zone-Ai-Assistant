@@ -1,32 +1,31 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
+from app.api.routes import auth
 
-# This creates the FastAPI application
+# Create the FastAPI app
 app = FastAPI(
     title="I-Zone AI Assistant",
     description="AI assistant that answers questions about I-Zone Technologies",
     version="1.0.0"
 )
 
-# CORS middleware — this allows the Next.js frontend to talk to this backend.
-# Without this, the browser blocks all requests from the frontend.
+# CORS — allows the Next.js frontend (port 3000) to talk to this backend (port 8000)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js runs on port 3000
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],   # Allow GET, POST, PUT, DELETE etc.
-    allow_headers=["*"],   # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
+# Register routes
+# This adds all /api/auth/* endpoints to the app
+app.include_router(auth.router)
 
 
 @app.get("/health")
 def health():
-    """
-    Health check endpoint.
-    Used to confirm the backend is running.
-    Visit: http://localhost:8000/health
-    """
+    """Health check — confirms the server is running."""
     return {
         "status": "ok",
         "message": "I-Zone AI Assistant API is running"
