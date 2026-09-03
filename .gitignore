@@ -13,6 +13,9 @@ backend/**/*.pyc
 # Uploaded files — never commit user uploads
 uploads/
 
+# ChromaDB vector store data
+chroma_db/
+
 # Python
 *.pyc
 

@@ -3,6 +3,7 @@ import shutil
 from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.models import Document, User
+from app.services.ingestion import process_document, remove_document_from_vectorstore
 
 # This is the folder where uploaded files will be saved on disk.
 # It will be created automatically if it doesn't exist.
@@ -71,6 +72,14 @@ def save_document(
     db.commit()
     db.refresh(document)
 
+    # Step 6 — Trigger the AI pipeline (process the document)
+    # This reads the file, chunks it, embeds it, and stores in ChromaDB
+    try:
+        process_document(document.id, db)
+    except Exception as e:
+        # Pipeline failed but document record exists — admin can see "failed" status
+        print(f"Pipeline error for document {document.id}: {e}")
+
     return document
 
 
@@ -99,6 +108,9 @@ def delete_document(document_id: int, db: Session) -> dict:
     file_path = os.path.join(UPLOAD_DIR, document.filename)
     if os.path.exists(file_path):
         os.remove(file_path)
+
+    # Remove chunks from ChromaDB
+    remove_document_from_vectorstore(document.id)
 
     # Delete from database
     db.delete(document)
