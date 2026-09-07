@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+
+  <!-- "i" — gold dot + stem -->
+  <circle cx="13" cy="9"  r="6.5" fill="#F5A623"/>
+  <rect   x="9"  y="22"  width="8" height="42" rx="4" fill="#F5A623"/>
+
+  <!-- "Z" — navy -->
+  <text x="30" y="70" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="60" fill="#1E3169">Z</text>
+
+  <!-- ── GEAR "O" centered (131, 40) ── -->
+  <g transform="translate(131,40)">
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(0)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(45)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(90)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(135)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(180)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(225)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(270)"/>
+    <rect x="-5" y="-38" width="10" height="18" rx="5" fill="#1E3169" transform="rotate(315)"/>
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#1E3169" stroke-width="10"/>
+    <circle cx="0" cy="0" r="14" fill="#F5A623"/>
+  </g>
+
+  <!-- "N" — navy -->
+  <text x="164" y="70" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="60" fill="#1E3169">N</text>
+
+  <!-- "E" — navy -->
+  <text x="208" y="70" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="60" fill="#1E3169">E</text>
+
+</svg>
