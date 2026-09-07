@@ -1,23 +1,21 @@
 import os
 from PyPDF2 import PdfReader
-
+from docx import Document as DocxDocument
 
 # Each chunk will be this many characters long
 CHUNK_SIZE = 1000
 
 # Chunks overlap by this many characters so context isn't lost at boundaries
-# Example: if chunk 1 ends with "I-Zone offers..." chunk 2 starts a bit before that
 CHUNK_OVERLAP = 200
+
+# Only these file types are allowed
+ALLOWED_EXTENSIONS = {".pdf", ".txt", ".docx"}
 
 
 def extract_text_from_file(file_path: str) -> str:
     """
     Reads a file and returns all its text content as a string.
-    Supports PDF and TXT files.
-    
-    Example:
-        extract_text_from_file("uploads/izone-services.pdf")
-        → "I-Zone Technologies offers dedicated development teams..."
+    Supports PDF, TXT and DOCX files.
     """
     ext = os.path.splitext(file_path)[1].lower()
 
@@ -25,6 +23,8 @@ def extract_text_from_file(file_path: str) -> str:
         return _extract_from_pdf(file_path)
     elif ext == ".txt":
         return _extract_from_txt(file_path)
+    elif ext == ".docx":
+        return _extract_from_docx(file_path)
     else:
         raise ValueError(f"Unsupported file type: {ext}")
 
@@ -46,24 +46,20 @@ def _extract_from_txt(file_path: str) -> str:
         return f.read()
 
 
+def _extract_from_docx(file_path: str) -> str:
+    """Reads a Word document and returns all paragraph text."""
+    doc = DocxDocument(file_path)
+    text = ""
+    for paragraph in doc.paragraphs:
+        if paragraph.text.strip():
+            text += paragraph.text + "\n"
+    return text
+
+
 def split_into_chunks(text: str, document_id: int) -> list[dict]:
     """
     Splits a long text into smaller overlapping chunks.
-    
-    Why overlap? So that if an answer spans two chunks, neither chunk
-    loses the context from the previous one.
-    
-    Returns a list of dicts like:
-    [
-        {
-            "id": "doc_1_chunk_0",
-            "text": "I-Zone Technologies offers...",
-            "metadata": {"document_id": 1, "chunk_index": 0}
-        },
-        ...
-    ]
-    
-    These dicts are what get stored in ChromaDB.
+    Returns a list of dicts ready to be stored in ChromaDB.
     """
     chunks = []
     start = 0
@@ -73,7 +69,7 @@ def split_into_chunks(text: str, document_id: int) -> list[dict]:
         end = start + CHUNK_SIZE
         chunk_text = text[start:end].strip()
 
-        if chunk_text:  # skip empty chunks
+        if chunk_text:
             chunks.append({
                 "id": f"doc_{document_id}_chunk_{chunk_index}",
                 "text": chunk_text,
@@ -84,7 +80,6 @@ def split_into_chunks(text: str, document_id: int) -> list[dict]:
             })
             chunk_index += 1
 
-        # Move forward but overlap with previous chunk
         start += CHUNK_SIZE - CHUNK_OVERLAP
 
     return chunks
